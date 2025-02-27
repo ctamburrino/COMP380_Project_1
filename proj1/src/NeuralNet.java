@@ -1,5 +1,5 @@
 public class NeuralNet {
-
+    //push test
 
     public static void weightInitializer(int[] weights) {
         /*
