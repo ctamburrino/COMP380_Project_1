@@ -22,7 +22,19 @@ public class DataSample {
         return pixelArray;
     }
 
-    public static int[] getOutputVector(){
+    public int getRowDimension(){
+        return rowDimension;
+    }
+
+    public int getColumnDimension(){
+        return columnDimension;
+    }
+
+    public int getOutputDimension(){
+        return outputDimension;
+    }
+
+    public int[] getOutputVector(){
         return outputVector;
     }
 
