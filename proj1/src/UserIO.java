@@ -24,13 +24,17 @@ public class UserIO {
                 switch(choice){
                 case 1:
                     getTrainingSettings();
-                    String trainingResults = NeuralNet.train(netTrainingSettings);
-                    System.out.println(trainingResults);
+                    int numEpochs = NeuralNet.train(netTrainingSettings);
+                    if (numEpochs > 0){
+                        System.out.println("Training convereged in " + numEpochs + " epochs.");
+                    }else{
+                        System.out.println("Failed to execute training algorithim.");
+                    }
                     return;
                 case 2:
                     getTestingSettings();
-                    String testingResults = NeuralNet.test(netTestingSettings);
-                    System.out.println(testingResults);
+                    //String testingResults = NeuralNet.test(netTestingSettings);
+                    //System.out.println(testingResults);
                     return;
                 case 3:
                     scanner.close();
@@ -141,7 +145,6 @@ public class UserIO {
             }
         }
     }
-
 
     private static void getTestingSettings(){
         // Get trained weights file name
