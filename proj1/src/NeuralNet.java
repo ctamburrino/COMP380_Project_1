@@ -1,4 +1,7 @@
 import java.util.List;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class NeuralNet {
     
@@ -50,6 +53,7 @@ public class NeuralNet {
                 converged = true;
             }
         }
+        saveWeightsToFile(weightMatrix, biasWeights, netTrainingSettings.trainedWeightsFile);
         return epochNum;
     }
 
@@ -129,7 +133,30 @@ public class NeuralNet {
             weightMatrix[i][outputNode] += (learningRate * targetOutputs[outputNode] * inputSignals[i]);
         }
         biasWeights[outputNode] += (learningRate * targetOutputs[outputNode]);
-    }       
+    }
+
+    public static void saveWeightsToFile(double[][] weightMatrix, double[]biasWeights, String trainedWeightsFileName){
+        // Save Node weights
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(trainedWeightsFileName))) {
+            for (double[] row : weightMatrix){
+                for (int j = 0; j < row.length; j++){
+                    writer.write(Double.toString(row[j]));
+                    if (j < row.length - 1) writer.write(" ");
+                }
+                writer.newLine();
+            }
+            writer.newLine();
+
+            // Save bias weights
+            for (int j = 0; j< biasWeights.length; j++){
+                writer.write(Double.toString(biasWeights[j]));
+                if (j < biasWeights.length - 1) writer.write(" ");
+            }
+            System.out.println("Weights saved successfully to " + trainedWeightsFileName);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
 }
 
 
