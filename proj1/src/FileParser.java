@@ -15,7 +15,7 @@ public class FileParser {
 
     static List<DataSample> dataset = new ArrayList<>();
 
-    public static List<DataSample> parseFile(){
+    public static List<DataSample> parseTrainingFile(String trainingDataFileName){
 
         try (BufferedReader reader = new BufferedReader(new FileReader(trainingDataFileName))){
             String line;
@@ -60,6 +60,7 @@ public class FileParser {
                 
             DataSample newDataSample = createDataSample(inputRows, inputColumns, outputDimensions);
             newDataSample.setPixelArray(pixelArray);
+            newDataSample.setOutputVector(outputVector);
             newDataSample.setLabel(label);
             dataset.add(newDataSample);
             }
