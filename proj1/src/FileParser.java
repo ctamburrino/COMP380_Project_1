@@ -72,12 +72,55 @@ public class FileParser {
         } 
     }
 
+    
     public static DataSample createDataSample(int rows, int columns, int outputDimension){
         DataSample newDataSample = new DataSample (rows, columns, outputDimension);
-
-
         return newDataSample;
     }
-    
+
+    public static void parseTrainedWeights(TestingSettings netTestingSettings){
+        String trainedWeightsFileName = "proj1/ " + netTestingSettings.trainedWeightsFilePath + ".txt";
+        
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(trainedWeightsFileName))){
+            String line;
+            line = reader.readLine();
+            String[] parts = line.trim().split("\\s+");
+            int numInputNodes = Integer.parseInt(parts[0]);
+
+            line = reader.readLine();
+            parts = line.trim().split("\\s+");
+            int numOutputNodes = Integer.parseInt(parts[0]);
+
+            reader.readLine();
+            double[][] weightMatrix = new double[numInputNodes][numOutputNodes];
+            double[] biasWeights = new double[numOutputNodes];
+
+            for (int rowNum = 0; rowNum < numInputNodes; rowNum++){
+                for (int columnNum = 0; columnNum < numOutputNodes; columnNum++){
+                    line = reader.readLine();
+                    for (int j = 0; j < inputRows; j++){
+                        parts = line.trim().split("\\s+");
+                        for (int k = 0; k < inputColumns; k ++){
+                            weightMatrix[rowNum][columnNum] = Double.parseDouble(parts[columnNum]);
+                        }
+                    }
+                }
+            }
+
+            netTestingSettings.weightMatrix = weightMatrix;
+
+            reader.readLine();
+            line = reader.readLine();
+            parts = line.trim().split("\\s+");
+            for (int columnNum = 0; columnNum < numOutputNodes; columnNum++){
+                biasWeights[columnNum] = Double.parseDouble(parts[columnNum]);
+            }
+
+            netTestingSettings.biasWeights = biasWeights;
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
+        } 
+    }
 }
 
