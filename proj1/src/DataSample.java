@@ -5,7 +5,7 @@ public class DataSample {
 
     private char label;
     private int[] pixelArray;
-    private static int[] outputVector;
+    private int[] outputVector;
 
 
     public DataSample(int rows, int columns, int outputDimension){
@@ -40,6 +40,9 @@ public class DataSample {
 
     public void setPixelArray(int[] pixelArray){
         this.pixelArray = pixelArray;
+    }
+    public void setOutputVector(int[] outputVector){
+        this.outputVector = outputVector;
     }
 
     public void setLabel(char letter){
