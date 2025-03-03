@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class TrainingSettings {
     String trainingDataFilePath;
     boolean setWeightsToZero;
@@ -6,4 +8,5 @@ public class TrainingSettings {
     double learningRate;
     double thetaThreshold;
     double weightChangeThreshold;
+    List<DataSample> dataset;
 }
