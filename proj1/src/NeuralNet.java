@@ -1,67 +1,118 @@
-public class NeuralNet {
-    //push test
+import java.util.List;
 
-    public static void weightInitializer(float[] weights, boolean random) {
+public class NeuralNet {
+    
+    public static int train(TrainingSettings netTrainingSettings){
+        // Get dataset
+        List<DataSample> dataset = FileParser.parseTrainingFile(netTrainingSettings.trainingDataFilePath);
+
+        // Create net architecture from first data sample in dataset
+        DataSample firstSample = dataset.get(0);
+        int numInputNodes = firstSample.getRowDimension() * firstSample.getColumnDimension();
+        int numOutputNodes = firstSample.getOutputDimension();
+        double[][] weightMatrix = new double[numInputNodes][numOutputNodes];
+        double[] biasWeights = new double[numOutputNodes];
+
+        // Create training variables
+        double learningRate = netTrainingSettings.learningRate;
+        double thetaThreshold = netTrainingSettings.thetaThreshold;
+
+        // Initialize bias weights
+        initializeWeights(biasWeights, netTrainingSettings.setWeightsToZero);
+
+        // Initialize node weights
+        for (int i = 0; i < numInputNodes; i++){
+            initializeWeights(weightMatrix[i], netTrainingSettings.setWeightsToZero);
+        }
+
+        // Perform training algorithm
+        double[] yIn = new double[numOutputNodes];
+        double[] yOut = new double[numOutputNodes];
+        boolean converged = false;
+        int epochNum = 0;
+        while (!converged){
+            epochNum += 1;
+            boolean weightChanged = false;
+            for (DataSample sample : dataset){
+                int[] inputSignals = sample.getPixelArray();
+                int[] targetOutputs = sample.getOutputVector();
+                for (int outputNode = 0; outputNode < numOutputNodes; outputNode++) {
+                    yIn[outputNode] = calculateYIn(weightMatrix, biasWeights, inputSignals, outputNode);
+                    yOut[outputNode] = applyActivationFunction(yIn[outputNode], thetaThreshold);
+
+                    if (yOut[outputNode] != targetOutputs[outputNode]){
+                        updateWeights(weightMatrix, biasWeights, inputSignals, targetOutputs, learningRate, outputNode);
+                        weightChanged = true;
+                    }
+                }
+            }
+            if (weightChanged == false){
+                converged = true;
+            }
+        }
+        return epochNum;
+    }
+
+    public static void initializeWeights(double[] weights, boolean setWeightsToZero) {
         /*
-        This function fills a list with 7 zeroes to initialize it's values. This would be
+        This function fills a list with values to initialize weights. If setWeightsToZero parameter is true
+        fills with zeros, else fills with random values in range -0.5 to 0.5. This would be
         applied to lists such as the weights of each node, or the weights of the b node.
 
-
         Parameters:
-        - boolean random: if the weights will be set to random or not
+        - boolean setWeightsToZero: if the weights will be set to zero or not
         - int[] weights: set of weights to be set to 0
         */
-        if (random) {
-            for (int i = 0; i < weights.length; i++) {
-            weights[i] = (float) (Math.random() - 0.5);
-        }
-        }
-        else {
+        if (setWeightsToZero) {
             for (int i = 0; i < weights.length; i++) {
                 weights[i] = 0;
             }
         }
+        else {
+            for (int i = 0; i < weights.length; i++) {
+                weights[i] = (double) (Math.random() - 0.5);
+            }
+        }
     }
 
-    public static float yInCalculation(float[][] _net, float[] _weightB, int[] _x, int currentPattern) {
+    public static double calculateYIn(double[][] weightMatrix, double[] biasWeights, int[] inputSignals, int outputNode) {
         /*
         This method calculates the y in value for the corresponding pattern.
 
 
         Parameters:
-        - int[][] _net: overarching net to access weights
-        - int[] _weightB: overaching b node weights
-        - int[] _x: pixels of the current sample
-        - int currentPattern: current pattern being trained for (Ex. A, B, C)
+        - double[][] weightMatrix: Matrix of current weight values
+        - double[] biasWeights: Array of current bias weight values
+        - int[] inputSignals: pixels of the current sample
+        - int outputNode: current outputNode being trained for
         */
-        float computedYIn = _weightB[currentPattern];
-        for (int i = 0; i < 63; i++) {
-            computedYIn += _x[i] * _net[i][currentPattern];
+        double computedYIn = biasWeights[outputNode];
+        for (int i = 0; i < inputSignals.length; i++) {
+            computedYIn += inputSignals[i] * weightMatrix[i][outputNode];
         }
-
-
         return computedYIn;
-
-
     }
 
 
-    public static int activationFunction(float _yIn) {
+    public static int applyActivationFunction(double yIn, double thetaThreshold) {
         /*
         This method takes in the yIn value and runs it into a bipolar activation function
 
 
         Parameters:
-        - int _yIn: value to be taken in and converted
+        - int yIn: value to be taken in and converted
         */
-        if (_yIn >= 0) {
+        if (yIn > thetaThreshold) {
             return 1;
+        } else if(yIn < thetaThreshold){
+            return -1;
+        } else {
+            return 0;
         }
-        return -1;
     }
 
 
-    public static void weightUpdating(float[][] _net, float[] _weightB, int[] _x, int[] _t, int a, int currentPattern ) {
+    public static void updateWeights(double[][] weightMatrix, double[] biasWeights, int[] inputSignals, int[] targetOutputs, double learningRate, int outputNode ) {
         /*
         This method changes the weights if the yOut value does not match the target value for
         the corresponding pattern. It then updates the weights to get closer to converging
@@ -74,61 +125,11 @@ public class NeuralNet {
         - int[] _t: target values of the current sample
         - int currentPattern: current pattern being trained for (Ex. A, B, C)
         */
-        for (int i = 0; i < 63; i++) {
-            _net[i][currentPattern] += (a * _t[currentPattern] * _x[i]);
+        for (int i = 0; i < inputSignals.length; i++) {
+            weightMatrix[i][outputNode] += (learningRate * targetOutputs[outputNode] * inputSignals[i]);
         }
-        _weightB[currentPattern] += (a * _t[currentPattern]);
-    }
-
-
-
-
-
-
-    public static void main(String[] args){
-        ///FileParser.parseFile();
-
-
-        //initialize weights
-        int n = 63;
-        int patterns = 7;
-        int fillerA = 1;
-        float[][] net = new float[n][patterns];
-        float[] weightB = new float[patterns];
-        weightInitializer(weightB, false);
-        for (int i = 0; i < n; i++){
-            weightInitializer(net[i], false);
-        }
-
-
-        boolean converged = false;
-        float[] yIn = new float[patterns];
-        float[] yOut = new float[patterns];
-        weightInitializer(yIn, false);
-        weightInitializer(yOut, false);
-        while (!converged){
-            converged = true;
-            for (DataSample sample : FileParser.dataset) {
-                int[] x = sample.getPixelArray();
-                int[] t = sample.getOutputVector();
-                for (int i = 0; i < patterns; i++) {
-                    yIn[i] = yInCalculation(net, weightB, x, i);
-                    yOut[i] = activationFunction(yIn[i]);
-
-
-                    if (yOut[i] != t[i]) {
-                        converged = false;
-                        weightUpdating(net, weightB, x, t, fillerA, i);
-                    }
-                }
-                   
-            }
-        }
-        UserIO.welcomeToPerceptron();
-    }
-
-
-       
+        biasWeights[outputNode] += (learningRate * targetOutputs[outputNode]);
+    }       
 }
 
 
