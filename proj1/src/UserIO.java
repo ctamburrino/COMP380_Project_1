@@ -24,16 +24,18 @@ public class UserIO {
                 switch(choice){
                 case 1:
                     getTrainingSettings();
+                    netTrainingSettings.dataset = FileParser.parseTrainingFile(netTrainingSettings.trainingDataFilePath);
                     int numEpochs = NeuralNet.train(netTrainingSettings);
                     if (numEpochs > 0){
-                        System.out.println("Training convereged in " + numEpochs + " epochs.");
+                        System.out.println("Training convereged after " + numEpochs + " epochs.");
                     }else{
                         System.out.println("Failed to execute training algorithim.");
                     }
                     return;
                 case 2:
                     getTestingSettings();
-                    //String testingResults = NeuralNet.test(netTestingSettings);
+                    //FileParser.parseTrainedWeights(netTestingSettings);
+                    //NeuralNet.test(netTestingSettings);
                     //System.out.println(testingResults);
                     return;
                 case 3:
