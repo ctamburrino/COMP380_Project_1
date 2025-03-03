@@ -4,15 +4,25 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class NeuralNet {
-    
+        /*
+        This function fills a list with values to initialize weights. If setWeightsToZero parameter is true
+        fills with zeros, else fills with random values in range -0.5 to 0.5. This would be
+        applied to lists such as the weights of each node, or the weights of the b node.
+
+        Parameters:
+        - boolean setWeightsToZero: if the weights will be set to zero or not
+        - int[] weights: set of weights to be set to 0
+        */
     public static int train(TrainingSettings netTrainingSettings){
         // Get dataset
-        List<DataSample> dataset = FileParser.parseTrainingFile(netTrainingSettings.trainingDataFilePath);
+        List<DataSample> dataset = netTrainingSettings.dataset;
 
         // Create net architecture from first data sample in dataset
         DataSample firstSample = dataset.get(0);
         int numInputNodes = firstSample.getRowDimension() * firstSample.getColumnDimension();
         int numOutputNodes = firstSample.getOutputDimension();
+
+        // Weight Matrices initialized with zero values by default
         double[][] weightMatrix = new double[numInputNodes][numOutputNodes];
         double[] biasWeights = new double[numOutputNodes];
 
@@ -20,12 +30,15 @@ public class NeuralNet {
         double learningRate = netTrainingSettings.learningRate;
         double thetaThreshold = netTrainingSettings.thetaThreshold;
 
-        // Initialize bias weights
-        initializeWeights(biasWeights, netTrainingSettings.setWeightsToZero);
+        // Set weights to random values if selected by user
+        if (!netTrainingSettings.setWeightsToZero){
+            // Initialize bias weights
+            initializeWeightsRandomValues(biasWeights);
 
-        // Initialize node weights
-        for (int i = 0; i < numInputNodes; i++){
-            initializeWeights(weightMatrix[i], netTrainingSettings.setWeightsToZero);
+            // Initialize node weights
+            for (int i = 0; i < numInputNodes; i++){
+                initializeWeightsRandomValues(biasWeights);
+            }
         }
 
         // Perform training algorithm
@@ -55,31 +68,22 @@ public class NeuralNet {
         }
         // If epochNum stopped while loop
         if (!converged){
-            System.out.println("Trainig reached max epochs: " + netTrainingSettings.maxEpochs + "  before converging");
+            System.out.println("Training reached max epochs: " + netTrainingSettings.maxEpochs + "  before converging");
         }
         saveWeightsToFile(weightMatrix, biasWeights, netTrainingSettings.trainedWeightsFile);
         return epochNum;
     }
 
-    public static void initializeWeights(double[] weights, boolean setWeightsToZero) {
+    public static void initializeWeightsRandomValues(double[] weights) {
         /*
-        This function fills a list with values to initialize weights. If setWeightsToZero parameter is true
-        fills with zeros, else fills with random values in range -0.5 to 0.5. This would be
+        This function fills a list with random values in range -0.5 to 0.5 to initialize weights. This would be
         applied to lists such as the weights of each node, or the weights of the b node.
 
         Parameters:
-        - boolean setWeightsToZero: if the weights will be set to zero or not
         - int[] weights: set of weights to be set to 0
         */
-        if (setWeightsToZero) {
-            for (int i = 0; i < weights.length; i++) {
-                weights[i] = 0;
-            }
-        }
-        else {
-            for (int i = 0; i < weights.length; i++) {
-                weights[i] = (double) (Math.random() - 0.5);
-            }
+        for (int i = 0; i < weights.length; i++) {
+            weights[i] = (double) (Math.random() - 0.5);
         }
     }
 
@@ -142,6 +146,9 @@ public class NeuralNet {
     public static void saveWeightsToFile(double[][] weightMatrix, double[]biasWeights, String trainedWeightsFileName){
         // Save Node weights
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(trainedWeightsFileName))) {
+            writer.write(weightMatrix.length + "\t\t// Number of input nodes\n");
+            writer.write(weightMatrix[0].length + "\t\t//Number of output nodes\n\n");
+
             for (double[] row : weightMatrix){
                 for (int j = 0; j < row.length; j++){
                     writer.write(Double.toString(row[j]));
@@ -161,6 +168,12 @@ public class NeuralNet {
             e.printStackTrace();
         }
     }
+
+    public static void test(TestingSettings netTestingSettings){
+        // Load trained weight matrices from file
+    }
+
+
 }
 
 
