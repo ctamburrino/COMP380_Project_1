@@ -33,8 +33,8 @@ public class NeuralNet {
         double[] yOut = new double[numOutputNodes];
         boolean converged = false;
         int epochNum = 0;
-        while (!converged){
-            epochNum += 1;
+        while (!converged && epochNum < netTrainingSettings.maxEpochs){
+            epochNum++;
             boolean weightChanged = false;
             for (DataSample sample : dataset){
                 int[] inputSignals = sample.getPixelArray();
@@ -52,6 +52,10 @@ public class NeuralNet {
             if (weightChanged == false){
                 converged = true;
             }
+        }
+        // If epochNum stopped while loop
+        if (!converged){
+            System.out.println("Trainig reached max epochs: " + netTrainingSettings.maxEpochs + "  before converging");
         }
         saveWeightsToFile(weightMatrix, biasWeights, netTrainingSettings.trainedWeightsFile);
         return epochNum;
