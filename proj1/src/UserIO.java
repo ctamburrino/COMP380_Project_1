@@ -24,7 +24,7 @@ public class UserIO {
                 switch(choice){
                 case 1:
                     getTrainingSettings();
-                    netTrainingSettings.dataset = FileParser.parseTrainingFile(netTrainingSettings.trainingDataFilePath);
+                    netTrainingSettings.dataset = FileParser.parseDataFile(netTrainingSettings.trainingDataFilePath);
                     int numEpochs = NeuralNet.train(netTrainingSettings);
                     if (numEpochs > 0){
                         System.out.println("Training convereged after " + numEpochs + " epochs.");
@@ -34,8 +34,9 @@ public class UserIO {
                     return;
                 case 2:
                     getTestingSettings();
-                    //FileParser.parseTrainedWeights(netTestingSettings);
-                    //NeuralNet.test(netTestingSettings);
+                    netTestingSettings.dataset = FileParser.parseDataFile(netTestingSettings.testingDataFilePath);
+                    FileParser.parseTrainedWeights(netTestingSettings);
+                    NeuralNet.test(netTestingSettings);
                     //System.out.println(testingResults);
                     return;
                 case 3:
@@ -118,7 +119,7 @@ public class UserIO {
                 System.out.println("Invalid filename, Please try again!");
             }
         } while (!isValidFilename(filename));
-        return filename;
+        return "proj1/" + filename + ".txt";
     }
 
     private static boolean isValidFilename(String filename){
