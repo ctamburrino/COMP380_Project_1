@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.List;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -37,13 +38,13 @@ public class NeuralNet {
 
             // Initialize node weights
             for (int i = 0; i < numInputNodes; i++){
-                initializeWeightsRandomValues(biasWeights);
+                initializeWeightsRandomValues(weightMatrix[i]);
             }
         }
 
         // Perform training algorithm
         double[] yIn = new double[numOutputNodes];
-        double[] yOut = new double[numOutputNodes];
+        int[] yOut = new int[numOutputNodes];
         boolean converged = false;
         int epochNum = 0;
         while (!converged && epochNum < netTrainingSettings.maxEpochs){
@@ -70,7 +71,7 @@ public class NeuralNet {
         if (!converged){
             System.out.println("Training reached max epochs: " + netTrainingSettings.maxEpochs + "  before converging");
         }
-        saveWeightsToFile(weightMatrix, biasWeights, netTrainingSettings.trainedWeightsFile);
+        saveWeightsToFile(weightMatrix, biasWeights, netTrainingSettings.trainedWeightsFile, netTrainingSettings.thetaThreshold);
         return epochNum;
     }
 
@@ -143,11 +144,12 @@ public class NeuralNet {
         biasWeights[outputNode] += (learningRate * targetOutputs[outputNode]);
     }
 
-    public static void saveWeightsToFile(double[][] weightMatrix, double[]biasWeights, String trainedWeightsFileName){
+    public static void saveWeightsToFile(double[][] weightMatrix, double[]biasWeights, String trainedWeightsFileName, double thetaThreshold){
         // Save Node weights
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(trainedWeightsFileName))) {
             writer.write(weightMatrix.length + "\t\t// Number of input nodes\n");
-            writer.write(weightMatrix[0].length + "\t\t//Number of output nodes\n\n");
+            writer.write(weightMatrix[0].length + "\t\t//Number of output nodes\n");
+            writer.write(thetaThreshold + "\t\t// Theta Threshold used for training\n\n");
 
             for (double[] row : weightMatrix){
                 for (int j = 0; j < row.length; j++){
@@ -171,8 +173,53 @@ public class NeuralNet {
 
     public static void test(TestingSettings netTestingSettings){
         // Load trained weight matrices from file
+        double [][] trainedWeightMatrix = netTestingSettings.trainedWeightMatrix;
+        double [] trainedBiasWeights = netTestingSettings.trainedBiasWeights;
+
+        // Get dataset to test
+        List<DataSample> dataset = netTestingSettings.dataset;
+        double thetaThreshold = netTestingSettings.thetaThreshold;
+
+        // Create net architecture from first data sample in dataset
+        DataSample firstSample = dataset.get(0);
+        int numInputNodes = firstSample.getRowDimension() * firstSample.getColumnDimension();
+        int numOutputNodes = firstSample.getOutputDimension();
+
+        int numSamples = dataset.size();
+
+        int[][] netClassifications = new int[numSamples][numOutputNodes];
+        for(int sampleNum = 0; sampleNum < dataset.size(); sampleNum++){
+            double[] yIn = new double[numOutputNodes];
+            int[] yOut = new int[numOutputNodes];
+            DataSample sample = dataset.get(sampleNum);
+            int[] inputSignals = sample.getPixelArray();
+            int[] targetOutputs = sample.getOutputVector();
+
+            for (int outputNode = 0; outputNode < numOutputNodes; outputNode++) {
+                yIn[outputNode] = calculateYIn(trainedWeightMatrix, trainedBiasWeights, inputSignals, outputNode);
+                yOut[outputNode] = applyActivationFunction(yIn[outputNode], thetaThreshold);
+            }
+            netClassifications[sampleNum] = yOut;
+        }
+
+        saveResultsToFile(netClassifications, netTestingSettings.testingResultsOutputFilePath);
     }
 
+    public static void saveResultsToFile(int[][] classifications, String testingResultsOutputFilePath){
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(testingResultsOutputFilePath))) {
+            int rowNum = 0;
+            for (int[] row : classifications){
+                rowNum++;
+                writer.write("Sample #" + rowNum + " was classified as: " + Arrays.toString(row));
+                writer.newLine();
+            }
+            writer.newLine();
+            writer.newLine();
+            System.out.println("Weights saved successfully to " + testingResultsOutputFilePath);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
 
 }
 
