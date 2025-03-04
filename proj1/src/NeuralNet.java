@@ -1,8 +1,8 @@
-import java.util.Arrays;
-import java.util.List;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 public class NeuralNet {
         /*
@@ -58,8 +58,8 @@ public class NeuralNet {
                     yOut[outputNode] = applyActivationFunction(yIn[outputNode], thetaThreshold);
 
                     if (yOut[outputNode] != targetOutputs[outputNode]){
-                        updateWeights(weightMatrix, biasWeights, inputSignals, targetOutputs, learningRate, outputNode);
-                        weightChanged = true;
+                        weightChanged = updateWeights(weightMatrix, biasWeights, inputSignals, targetOutputs, learningRate, outputNode, netTrainingSettings.weightChangeThreshold);
+                        //weightChanged = true;
                     }
                 }
             }
@@ -125,7 +125,7 @@ public class NeuralNet {
     }
 
 
-    public static void updateWeights(double[][] weightMatrix, double[] biasWeights, int[] inputSignals, int[] targetOutputs, double learningRate, int outputNode ) {
+    public static boolean updateWeights(double[][] weightMatrix, double[] biasWeights, int[] inputSignals, int[] targetOutputs, double learningRate, int outputNode, double weightChangeThreshold) {
         /*
         This method changes the weights if the yOut value does not match the target value for
         the corresponding pattern. It then updates the weights to get closer to converging
@@ -138,10 +138,15 @@ public class NeuralNet {
         - int[] _t: target values of the current sample
         - int currentPattern: current pattern being trained for (Ex. A, B, C)
         */
+        boolean greaterThanChangeThreshold = false;
         for (int i = 0; i < inputSignals.length; i++) {
             weightMatrix[i][outputNode] += (learningRate * targetOutputs[outputNode] * inputSignals[i]);
+            if ((learningRate * targetOutputs[outputNode] * inputSignals[i]) < weightChangeThreshold) {
+                greaterThanChangeThreshold = true;
+            }
         }
         biasWeights[outputNode] += (learningRate * targetOutputs[outputNode]);
+        return greaterThanChangeThreshold;
     }
 
     public static void saveWeightsToFile(double[][] weightMatrix, double[]biasWeights, String trainedWeightsFileName, double thetaThreshold){
