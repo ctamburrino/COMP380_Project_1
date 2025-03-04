@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileParser {
-    static String trainingDataFileName = "proj1/Sample Training Dataset.txt";
+    static String dataFileName = "proj1/Sample Training Dataset.txt";
     static String testingDataFileName = "proj1/Sample Testing Dataset-1.txt";
 
     static int inputRows;
@@ -15,9 +15,9 @@ public class FileParser {
 
     static List<DataSample> dataset = new ArrayList<>();
 
-    public static List<DataSample> parseTrainingFile(String trainingDataFileName){
+    public static List<DataSample> parseDataFile(String dataFileName){
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(trainingDataFileName))){
+        try (BufferedReader reader = new BufferedReader(new FileReader(dataFileName))){
             String line;
             for (int i = 0;i < 4; i++){
                 line = reader.readLine();
@@ -79,7 +79,7 @@ public class FileParser {
     }
 
     public static void parseTrainedWeights(TestingSettings netTestingSettings){
-        String trainedWeightsFileName = "proj1/ " + netTestingSettings.trainedWeightsFilePath + ".txt";
+        String trainedWeightsFileName = netTestingSettings.trainedWeightsFilePath;
         
 
         try (BufferedReader reader = new BufferedReader(new FileReader(trainedWeightsFileName))){
@@ -92,23 +92,22 @@ public class FileParser {
             parts = line.trim().split("\\s+");
             int numOutputNodes = Integer.parseInt(parts[0]);
 
+            line = reader.readLine();
+            parts = line.trim().split("\\s+");
+            netTestingSettings.thetaThreshold = Double.parseDouble(parts[0]);
+
             reader.readLine();
             double[][] weightMatrix = new double[numInputNodes][numOutputNodes];
             double[] biasWeights = new double[numOutputNodes];
 
             for (int rowNum = 0; rowNum < numInputNodes; rowNum++){
+                line = reader.readLine();
+                parts = line.trim().split("\\s+");
                 for (int columnNum = 0; columnNum < numOutputNodes; columnNum++){
-                    line = reader.readLine();
-                    for (int j = 0; j < inputRows; j++){
-                        parts = line.trim().split("\\s+");
-                        for (int k = 0; k < inputColumns; k ++){
-                            weightMatrix[rowNum][columnNum] = Double.parseDouble(parts[columnNum]);
-                        }
-                    }
+                    weightMatrix[rowNum][columnNum] = Double.parseDouble(parts[columnNum]);
                 }
             }
-
-            netTestingSettings.weightMatrix = weightMatrix;
+            netTestingSettings.trainedWeightMatrix = weightMatrix;
 
             reader.readLine();
             line = reader.readLine();
@@ -117,7 +116,7 @@ public class FileParser {
                 biasWeights[columnNum] = Double.parseDouble(parts[columnNum]);
             }
 
-            netTestingSettings.biasWeights = biasWeights;
+            netTestingSettings.trainedBiasWeights = biasWeights;
         } catch (IOException e) {
             System.out.println("Error reading file: " + e.getMessage());
         } 
