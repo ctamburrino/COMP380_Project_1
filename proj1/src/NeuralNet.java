@@ -158,7 +158,7 @@ public class NeuralNet {
 
             for (double[] row : weightMatrix){
                 for (int j = 0; j < row.length; j++){
-                    writer.write(Double.toString(row[j]));
+                    writer.write(String.format("%.6f", row[j]));
                     if (j < row.length - 1) writer.write(" ");
                 }
                 writer.newLine();
@@ -167,7 +167,7 @@ public class NeuralNet {
 
             // Save bias weights
             for (int j = 0; j< biasWeights.length; j++){
-                writer.write(Double.toString(biasWeights[j]));
+                writer.write(String.format("%.6f", biasWeights[j]));
                 if (j < biasWeights.length - 1) writer.write(" ");
             }
             System.out.println("Weights saved successfully to " + trainedWeightsFileName);
