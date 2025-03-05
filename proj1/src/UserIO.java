@@ -4,6 +4,9 @@ import java.io.File;
 public class UserIO {
 
     public static void welcomeToPerceptron(){
+    /*
+    Controls UI interaction
+    */
         getUserIntSelection();
     }
 
@@ -12,6 +15,9 @@ public class UserIO {
     static TestingSettings netTestingSettings = new TestingSettings();
 
     public static void getUserIntSelection(){
+    /*
+    Runs main menu of program.  Performs action based on user selection
+    */
         int choice;
         while(true) {
             System.out.println("Welcome to our first neural network - A Perceptron Net!");
@@ -22,6 +28,7 @@ public class UserIO {
                 choice = scanner.nextInt();
                 scanner.nextLine();
                 switch(choice){
+                // User selects Training
                 case 1:
                     getTrainingSettings();
                     netTrainingSettings.dataset = FileParser.parseDataFile(netTrainingSettings.trainingDataFilePath);
@@ -32,13 +39,14 @@ public class UserIO {
                         System.out.println("Failed to execute training algorithim.");
                     }
                     return;
+                // User selects Testing
                 case 2:
                     getTestingSettings();
                     netTestingSettings.dataset = FileParser.parseDataFile(netTestingSettings.testingDataFilePath);
                     FileParser.parseTrainedWeights(netTestingSettings);
                     NeuralNet.test(netTestingSettings);
-                    //System.out.println(testingResults);
                     return;
+                // User quits
                 case 3:
                     scanner.close();
                     return;
@@ -53,6 +61,9 @@ public class UserIO {
     }
 
     public static void getTrainingSettings(){
+    /*
+    Fills TrainingSettings object with user specified training settings
+    */
         // Get training data file name
         String trainingFilePrompt = "\nEnter the training file name: ";
         String trainingFilePath = getValidFile(trainingFilePrompt);
@@ -90,6 +101,17 @@ public class UserIO {
     }
 
     private static int getIntInput(String prompt, int min, int max) {
+    /*
+    Displays message and collects int input from user
+
+    Parameters:
+    - String prompt: prompt to display to user
+    - int min: minimum value user can select
+    - int max: maximum value user can select
+
+    Return:
+    - int representing user's input
+    */
         int input;
         while (true) {
             System.out.println(prompt);
@@ -109,6 +131,15 @@ public class UserIO {
     }
 
     private static String getValidFilename(String prompt){
+    /*
+    Displays message and collects file name input from user
+
+    Parameters:
+    - String prompt: prompt to display to user
+
+    Return:
+    - String representing user's input
+    */
         String filename;
         do {
             System.out.println(prompt);
@@ -121,6 +152,15 @@ public class UserIO {
     }
 
     private static boolean isValidFilename(String filename){
+    /*
+    Checks filename entered by user is compatible with linux system
+
+    Parameters:
+    - String filename: File name entered by user
+
+    Return:
+    - boolean representing whether filename is valid
+    */
         if (filename == null || filename.isEmpty()) return false;
         if (!filename.matches("^[^/]*$")) return false;
         if (filename.equals(".") || filename.equals("..")) return false;
@@ -129,6 +169,17 @@ public class UserIO {
     }
 
     private static double getDoubleInput(String prompt, double min, double max){
+    /*
+    Displays message and collects double input from user
+
+    Parameters:
+    - String prompt: prompt to display to user
+    - int min: minimum value user can select
+    - int max: maximum value user can select
+
+    Return:
+    - double representing user's input
+    */
         double input;
         while (true){
             System.out.println(prompt);
@@ -148,6 +199,9 @@ public class UserIO {
     }
 
     private static void getTestingSettings(){
+    /*
+    Fills TestingSettings object with user specified testing settings
+    */
         // Get trained weights file name
         String trainedWeightsPrompt = "\nEnter the trained net weight file name:";
         String trainedWeightFilePath = getValidFile(trainedWeightsPrompt);
@@ -165,6 +219,16 @@ public class UserIO {
     }
 
     private static String getValidFile(String prompt){
+    /*
+    Displays message and collects name of file to load from user.
+    Checks if file exits.
+
+    Parameters:
+    - String prompt: prompt to display to user
+
+    Return:
+    - String representing path to file specified by user
+    */
         File file = new File("");
         String filePath;
         System.out.println(prompt);

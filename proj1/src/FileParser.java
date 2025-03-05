@@ -21,7 +21,6 @@ public class FileParser {
     Return:
     List of DataSamples representing the dataset of sample data
     */
-
         try (BufferedReader reader = new BufferedReader(new FileReader(dataFileName))){
             String line;
             // Parse header lines
