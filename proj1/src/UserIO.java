@@ -52,9 +52,7 @@ public class UserIO {
         }
     }
 
-
     public static void getTrainingSettings(){
-        
         // Get training data file name
         String trainingFilePrompt = "\nEnter the training file name: ";
         String trainingFilePath = getValidFile(trainingFilePrompt);

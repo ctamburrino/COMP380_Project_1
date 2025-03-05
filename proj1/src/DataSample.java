@@ -1,19 +1,20 @@
 public class DataSample {
+    // Instance Variables
     private int rowDimension;
     private int columnDimension;
     private int outputDimension;
-
     private char label;
     private int[] pixelArray;
     private int[] outputVector;
 
-
+    // Constructor
     public DataSample(int rows, int columns, int outputDimension){
         this.rowDimension = rows;
         this.columnDimension = columns;
         this.outputDimension = outputDimension;
     }
 
+    // Getters
     public char getLabel(){
         return label;
     }
@@ -38,9 +39,11 @@ public class DataSample {
         return outputVector;
     }
 
+    // Setters
     public void setPixelArray(int[] pixelArray){
         this.pixelArray = pixelArray;
     }
+    
     public void setOutputVector(int[] outputVector){
         this.outputVector = outputVector;
     }
