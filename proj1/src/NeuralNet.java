@@ -306,7 +306,7 @@ public class NeuralNet {
                 writer.write("Actual:\n"+actualOutput[labelIncrement].toString());
                 writer.newLine();
                 if(classifiedLabel==null){
-                    writer.write("Classified: INCORRECT\n"+Label.arrayToString(row));
+                    writer.write("Classified:\n INCORRECT\n"+Label.arrayToString(row));
                 }
                 else{
                     writer.write("Classified:\n"+classifiedLabel.toString());
@@ -321,6 +321,7 @@ public class NeuralNet {
             }
             writer.newLine();
             writer.newLine();
+            writer.close();
             System.out.println("Weights saved successfully to " + testingResultsOutputFilePath);
         } catch (IOException e){
             e.printStackTrace();
