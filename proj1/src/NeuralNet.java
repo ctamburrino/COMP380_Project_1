@@ -3,6 +3,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.lang.StringBuilder;
 
 
 
@@ -272,11 +273,18 @@ public class NeuralNet {
             return null;
         }
 
+        public static String arrayToString(int[] array){
+            StringBuilder sb = new StringBuilder();
+            for(int i=0; i<array.length; i++){
+                sb.append(array[i]+" ");
+            }
+            return sb.toString();
+        }
 
         //Override the toString so it prints out in the required format
         @Override
         public String toString(){
-            return this.name()+"\n"+Arrays.toString(this.output);
+            return this.name()+"\n"+Label.arrayToString(this.output);
         }
     }
 
@@ -308,6 +316,7 @@ public class NeuralNet {
                 else
                     labelIncrement++;
                 //writer.write("Sample #" + rowNum + " was classified as: " + Arrays.toString(row));
+                writer.newLine();
                 writer.newLine();
             }
             writer.newLine();
