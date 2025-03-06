@@ -196,7 +196,7 @@ public class NeuralNet {
                 writer.write(String.format("%.6f", biasWeights[j]));
                 if (j < biasWeights.length - 1) writer.write(" ");
             }
-            System.out.println("Weights saved successfully to " + trainedWeightsFileName);
+            System.out.println("Weights saved successfully to " + trainedWeightsFileName + "\n");
         } catch (IOException e){
             e.printStackTrace();
         }
@@ -321,7 +321,7 @@ public class NeuralNet {
             }
             writer.newLine();
             writer.newLine();
-            System.out.println("Weights saved successfully to " + testingResultsOutputFilePath);
+            System.out.println("Results saved successfully to " + testingResultsOutputFilePath + "\n");
         } catch (IOException e){
             e.printStackTrace();
         }
