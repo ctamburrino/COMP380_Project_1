@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+
+
+
 public class NeuralNet {
     public static int train(TrainingSettings netTrainingSettings){
     /*
@@ -235,6 +238,48 @@ public class NeuralNet {
         saveResultsToFile(netClassifications, netTestingSettings.testingResultsOutputFilePath);
     }
 
+    //enumerated type to help identify the letter based on the output
+    public enum Label{
+        //creating teh Lables based on
+        A(new int[]{1, -1, -1, -1, -1, -1, -1}),
+        B(new int[]{-1, 1, -1, -1, -1, -1, -1}),
+        C(new int[]{-1, -1, 1, -1, -1, -1, -1}),
+        D(new int[]{-1, -1, -1, 1, -1, -1, -1}),
+        E(new int[]{-1, -1, -1, -1, 1, -1, -1}),
+        J(new int[]{-1, -1, -1, -1, -1, 1, -1}),
+        K(new int[]{-1, -1, -1, -1, -1, -1, 1});
+        //instance variable
+        private final int[] output;
+        //initialization
+        Label(int[] output){
+            this.output = output;
+        }
+
+        /*
+        * Method that returns the corresponding label based on the given output array.
+        *
+        * @param givenOutput - an individual output array from testing
+        *
+        * @return the corresponding label to the output array
+        *
+        * */
+        public static Label getLabel(int[] givenOutput){
+            for(Label label : Label.values()){
+                if(Arrays.equals(givenOutput, label.output)){
+                    return label;
+                }
+            }
+            return null;
+        }
+
+
+        //Override the toString so it prints out in the required format
+        @Override
+        public String toString(){
+            return this.name()+"\n"+Arrays.toString(this.output);
+        }
+    }
+
     public static void saveResultsToFile(int[][] classifications, String testingResultsOutputFilePath){
     /*
     Saves classification results from testing to output file specified by user
@@ -245,9 +290,24 @@ public class NeuralNet {
     */
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(testingResultsOutputFilePath))) {
             int rowNum = 0;
+            Label[] actualOutput = Label.values();
+            int labelIncrement = 0;
             for (int[] row : classifications){
                 rowNum++;
-                writer.write("Sample #" + rowNum + " was classified as: " + Arrays.toString(row));
+                Label classifiedLabel = Label.getLabel(row);
+                writer.write("Actual:\n"+actualOutput[labelIncrement].toString());
+                writer.newLine();
+                if(classifiedLabel==null){
+                    writer.write("Classified: INCORRECT\n"+Arrays.toString(row));
+                }
+                else{
+                    writer.write("Classified:\n"+classifiedLabel.toString());
+                }
+                if(labelIncrement==6)
+                    labelIncrement = 0;
+                else
+                    labelIncrement++;
+                //writer.write("Sample #" + rowNum + " was classified as: " + Arrays.toString(row));
                 writer.newLine();
             }
             writer.newLine();
