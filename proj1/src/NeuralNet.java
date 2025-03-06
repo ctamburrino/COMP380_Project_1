@@ -297,11 +297,9 @@ public class NeuralNet {
     - String testingResultsOutputFilePath: filepath of output file specified by user
     */
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(testingResultsOutputFilePath))) {
-            int rowNum = 0;
             Label[] actualOutput = Label.values();
             int labelIncrement = 0;
             for (int[] row : classifications){
-                rowNum++;
                 Label classifiedLabel = Label.getLabel(row);
                 writer.write("Actual:\n"+actualOutput[labelIncrement].toString());
                 writer.newLine();
