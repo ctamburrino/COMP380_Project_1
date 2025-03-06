@@ -306,7 +306,7 @@ public class NeuralNet {
                 writer.write("Actual:\n"+actualOutput[labelIncrement].toString());
                 writer.newLine();
                 if(classifiedLabel==null){
-                    writer.write("Classified: INCORRECT\n"+Arrays.toString(row));
+                    writer.write("Classified: INCORRECT\n"+Label.arrayToString(row));
                 }
                 else{
                     writer.write("Classified:\n"+classifiedLabel.toString());
