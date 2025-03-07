@@ -239,7 +239,7 @@ public class NeuralNet {
         saveResultsToFile(netClassifications, netTestingSettings.testingResultsOutputFilePath);
     }
 
-    //enumerated type to help identify the letter based on the output
+    //enumerated type to help identify the label based on the output vector
     public enum Label{
         //creating teh Lables based on
         A(new int[]{1, -1, -1, -1, -1, -1, -1}),
@@ -251,7 +251,10 @@ public class NeuralNet {
         K(new int[]{-1, -1, -1, -1, -1, -1, 1});
         //instance variable
         private final int[] output;
-        //initialization
+        /*initialization function
+        * Parameters:
+        * int[] output - the output vector associated with the label
+        */
         Label(int[] output){
             this.output = output;
         }
@@ -259,9 +262,12 @@ public class NeuralNet {
         /*
         * Method that returns the corresponding label based on the given output array.
         *
-        * @param givenOutput - an individual output array from testing
+        * Parameters:
+        * int[] givenOutput - an individual output array from testing
         *
-        * @return the corresponding label to the output array
+        * Return:
+        * Label object - the corresponding label to the output array
+        * null - if the output vector does not correspond with any of the labels
         *
         * */
         public static Label getLabel(int[] givenOutput){
@@ -273,6 +279,16 @@ public class NeuralNet {
             return null;
         }
 
+        /*
+        * a method that turns an array into a string without brackets or commas, with each element being space separated
+        *
+        * Parameters:
+        * int[] array - the array to be transformed
+        *
+        * Returns:
+        * a String of the transformed array
+        *
+        * */
         public static String arrayToString(int[] array){
             StringBuilder sb = new StringBuilder();
             for(int i=0; i<array.length; i++){
@@ -281,7 +297,15 @@ public class NeuralNet {
             return sb.toString();
         }
 
-        //Override the toString so it prints out in the required format
+        /*Override the toString such that it prints out in the required format
+        *
+        * Parameters:
+        * None
+        *
+        * Returns:
+        * a String of the name followed by a new line and the array transformed by the arrayToString() method
+        *
+        * */
         @Override
         public String toString(){
             return this.name()+"\n"+Label.arrayToString(this.output);
@@ -300,20 +324,23 @@ public class NeuralNet {
             Label[] actualOutput = Label.values();
             int labelIncrement = 0;
             for (int[] row : classifications){
+                //identifies the label it was trying to classify
                 Label classifiedLabel = Label.getLabel(row);
+                //prints out the expected result
                 writer.write("Actual:\n"+actualOutput[labelIncrement].toString());
                 writer.newLine();
+                //prints out what it was classified as, and Undecided if the vector was not identified
                 if(classifiedLabel==null){
-                    writer.write("Classified:\n INCORRECT\n"+Label.arrayToString(row));
+                    writer.write("Classified:\nUndecided\n"+Label.arrayToString(row));
                 }
                 else{
                     writer.write("Classified:\n"+classifiedLabel.toString());
                 }
+                //increments the labels
                 if(labelIncrement==6)
                     labelIncrement = 0;
                 else
                     labelIncrement++;
-                //writer.write("Sample #" + rowNum + " was classified as: " + Arrays.toString(row));
                 writer.newLine();
                 writer.newLine();
             }
