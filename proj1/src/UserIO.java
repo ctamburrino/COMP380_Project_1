@@ -11,10 +11,10 @@ public class UserIO {
     }
 
     static Scanner scanner = new Scanner(System.in);
-    static TrainingSettings netTrainingSettings = new TrainingSettings();
-    static TestingSettings netTestingSettings = new TestingSettings();
 
     public static int getUserIntSelection(){
+        TrainingSettings netTrainingSettings = new TrainingSettings();
+        TestingSettings netTestingSettings = new TestingSettings();
         int choice;
         while(true) {
             System.out.println("Welcome to our first neural network - A Perceptron Net!");
@@ -26,17 +26,17 @@ public class UserIO {
                 scanner.nextLine();
                 switch(choice){
                 case 1:
-                    getTrainingSettings();
+                    netTrainingSettings = getTrainingSettings(netTrainingSettings);
                     netTrainingSettings.dataset = FileParser.parseDataFile(netTrainingSettings.trainingDataFilePath);
                     int numEpochs = NeuralNet.train(netTrainingSettings);
                     if (numEpochs > 0){
-                        System.out.println("Training convereged after " + numEpochs + " epochs.");
+                        System.out.println("Training convereged after " + numEpochs + " epochs.\n");
                     }else{
                         System.out.println("Failed to execute training algorithim.");
                     }
                     return 1;
                 case 2:
-                    getTestingSettings();
+                    netTestingSettings = getTestingSettings(netTestingSettings);
                     netTestingSettings.dataset = FileParser.parseDataFile(netTestingSettings.testingDataFilePath);
                     FileParser.parseTrainedWeights(netTestingSettings);
                     NeuralNet.test(netTestingSettings);
@@ -56,7 +56,7 @@ public class UserIO {
     }
 
 
-    public static void getTrainingSettings(){
+    public static TrainingSettings getTrainingSettings(TrainingSettings netTrainingSettings){
         
         // Get training data file name
         String trainingFilePrompt = "\nEnter the training file name: ";
@@ -92,6 +92,8 @@ public class UserIO {
         String weightThresholdPrompt = "\nEnter the threshold to be used for measuring weight changes:";
         double weightThresholdChoice = getDoubleInput(weightThresholdPrompt, 0.0000001, 10000000.0);
         netTrainingSettings.weightChangeThreshold = weightThresholdChoice;
+
+        return netTrainingSettings;
     }
 
     private static int getIntInput(String prompt, int min, int max) {
@@ -152,7 +154,7 @@ public class UserIO {
         }
     }
 
-    private static void getTestingSettings(){
+    private static TestingSettings getTestingSettings(TestingSettings netTestingSettings){
         // Get trained weights file name
         String trainedWeightsPrompt = "\nEnter the trained net weight file name:";
         String trainedWeightFilePath = getValidFile(trainedWeightsPrompt);
@@ -167,6 +169,8 @@ public class UserIO {
         String testingResultsPrompt = "\nEnter a file name to save the testing results:";
         String testingResultsOutputFile = getValidFilename(testingResultsPrompt);
         netTestingSettings.testingResultsOutputFilePath = testingResultsOutputFile;
+
+        return netTestingSettings;
     }
 
     private static String getValidFile(String prompt) {

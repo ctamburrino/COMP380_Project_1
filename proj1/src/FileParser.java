@@ -9,7 +9,6 @@ public class FileParser {
     static int inputColumns;
     static int outputDimensions;
     static int numSamples;
-    static List<DataSample> dataset = new ArrayList<>();
 
     public static List<DataSample> parseDataFile(String dataFileName){
     /*
@@ -21,6 +20,7 @@ public class FileParser {
     Return:
     List of DataSamples representing the dataset of sample data
     */
+    List<DataSample> dataset = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(dataFileName))){
             String line;
             // Parse header lines

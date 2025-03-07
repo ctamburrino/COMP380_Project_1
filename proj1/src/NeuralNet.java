@@ -196,7 +196,7 @@ public class NeuralNet {
                 writer.write(String.format("%.6f", biasWeights[j]));
                 if (j < biasWeights.length - 1) writer.write(" ");
             }
-            System.out.println("Weights saved successfully to " + trainedWeightsFileName);
+            System.out.println("Weights saved successfully to " + trainedWeightsFileName + "\n");
         } catch (IOException e){
             e.printStackTrace();
         }
@@ -297,11 +297,9 @@ public class NeuralNet {
     - String testingResultsOutputFilePath: filepath of output file specified by user
     */
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(testingResultsOutputFilePath))) {
-            int rowNum = 0;
             Label[] actualOutput = Label.values();
             int labelIncrement = 0;
             for (int[] row : classifications){
-                rowNum++;
                 Label classifiedLabel = Label.getLabel(row);
                 writer.write("Actual:\n"+actualOutput[labelIncrement].toString());
                 writer.newLine();
@@ -322,7 +320,7 @@ public class NeuralNet {
             writer.newLine();
             writer.newLine();
             writer.close();
-            System.out.println("Weights saved successfully to " + testingResultsOutputFilePath);
+            System.out.println("Results saved successfully to " + testingResultsOutputFilePath + "\n");
         } catch (IOException e){
             e.printStackTrace();
         }
