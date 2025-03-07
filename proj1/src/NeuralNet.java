@@ -1,12 +1,23 @@
+/*
+ * This program implements the neural net portion of the program.  It has methods
+ * to train the net and save weights to an output file, and test the neural net on
+ * a dataset and save the results to an output file.
+ * 
+ * Authors:
+ * - Cory Tamburrino
+ * - David Kujawinski
+ * - Dinh Troung
+ * 
+ * Date Last Modified: 3/7/2025
+ */
+
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.lang.StringBuilder;
-
-
-
 
 public class NeuralNet {
     public static int train(TrainingSettings netTrainingSettings){

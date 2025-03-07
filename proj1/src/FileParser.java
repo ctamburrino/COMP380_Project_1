@@ -1,3 +1,14 @@
+/*
+ * This program implements file parsing into data structures to be used by the neural net.
+ * 
+ * Authors:
+ * - Cory Tamburrino
+ * - David Kujawinski
+ * - Dinh Troung
+ * 
+ * Date Last Modified: 3/7/2025
+ */
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
